@@ -57,10 +57,21 @@ def corruption_image_comparison():
         cv2.putText(dilation_img, 'Dilation', (20, dilation_img.shape[0] - 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, color=(255, 0, 0))
 
+        convex_img = cv2.imread(
+            image_dir + file_names[0] + '_convex.' + file_names[1])
+        cv2.putText(convex_img, 'Convex', (20, convex_img.shape[0] - 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, 1, color=(255, 0, 0))
+
         img = np.concatenate((
-            original_image, circle_img, rect_img, triangle_img,
+            original_image,
+            circle_img,
+            rect_img,
+            triangle_img,
             ellipse_img,
-            line_img, erosion_img, dilation_img), axis=1)
+            line_img,
+            erosion_img,
+            dilation_img,
+            convex_img), axis=1)
         cv2.imshow('Shapes Comparison', img)
         k = cv2.waitKey(0)
 

@@ -1,6 +1,7 @@
 import glob
 import os
-
+import skimage.io
+from skimage.morphology import convex_hull_image
 import shutil
 import cv2
 import numpy as np
@@ -92,12 +93,21 @@ def dilation(img):
     return img
 
 
+
+def convex(img):
+    img = convex_hull_image(img)
+    img = img.astype(np.float32)
+    return img
+
+
+
 def write_images(shape_type, file_path, img):
     names = os.path.basename(file_path).split('.')
     dest_file_name = names[0] + '_' + shape_type + '.' + names[1]
-    cv2.imwrite(os.path.join(dest_dir, dest_file_name), img)
-
-
+    if shape_type == 'convex':
+        skimage.io.imsave(os.path.join(dest_dir, dest_file_name), img)
+    else:
+        cv2.imwrite(os.path.join(dest_dir, dest_file_name), img)
 
 
 if __name__ == '__main__':
@@ -113,10 +123,9 @@ if __name__ == '__main__':
 
 
     for file in files:
-        # create random circle
-        image = cv2.imread(file)
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
+        image = cv2.imread(file, 0)
+        # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        thresh = cv2.threshold(image, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
         x, y, w, h = cv2.boundingRect(thresh)
 
         # img = cv2.rectangle(img, (x,y),(x+w,y+h),(255,0,0),3)
@@ -148,4 +157,8 @@ if __name__ == '__main__':
         ## triangle
         img = create_random_triangle(image.copy(), x, y, w, h)
         write_images(shape_type='triangle', file_path=file, img=img)
+
+
+        img = convex(image.copy())
+        write_images(shape_type='convex', file_path=file, img=img)
 
