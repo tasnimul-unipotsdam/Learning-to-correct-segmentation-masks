@@ -59,7 +59,7 @@ def _write_examples(example_data, filename: str, channels):
     return None
 
 
-class writing_record():
+class WritingRecord:
 
     def __init__(self):
         self.original_img_dir = '../femur_2d_segmentations/middle_slices/*'
@@ -67,7 +67,6 @@ class writing_record():
         self.record_path = '../records'
         self.train_ratio = 0.9
         self.valid_ratio = 0.05
-
 
     def create_dataset(self, image_list, data_type):
         data = []
@@ -118,5 +117,5 @@ class writing_record():
 
 
 if __name__ == '__main__':
-    tf_record = writing_record()
+    tf_record = WritingRecord()
     tf_record.pre_process_data()

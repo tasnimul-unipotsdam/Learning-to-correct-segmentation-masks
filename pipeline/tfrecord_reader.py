@@ -7,7 +7,6 @@ import tensorflow as tf
 from pipeline.augmentation import _normalize_, train_augmentation
 
 
-
 class TFRecordReader(object):
 
     def __init__(self, record_path, is_training=True):
@@ -49,9 +48,8 @@ class TFRecordReader(object):
 
         return crr_image, org_image
 
-
     def train_dataset(self):
-        files = os.path.join(self.record_path,f'{self.data_type}_femur.tfrecord')
+        files = os.path.join(self.record_path, f'{self.data_type}_femur.tfrecord')
         filenames = glob.glob(files)
         dataset = tf.data.Dataset.list_files(files, shuffle=self.is_shuffle,
                                              seed=self.seed)
@@ -66,7 +64,7 @@ class TFRecordReader(object):
                               num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         dataset = dataset.map(_normalize_,
-                                  num_parallel_calls=tf.data.experimental.AUTOTUNE)
+                              num_parallel_calls=tf.data.experimental.AUTOTUNE)
         dataset = dataset.shuffle(self.buffer, seed=self.seed)
         dataset = dataset.repeat(1)
         dataset = dataset.batch(self.batch_size)
@@ -74,7 +72,7 @@ class TFRecordReader(object):
         return dataset
 
     def validation_dataset(self):
-        files = os.path.join(self.record_path,f'{self.data_type}_femur.tfrecord')
+        files = os.path.join(self.record_path, f'{self.data_type}_femur.tfrecord')
         filenames = glob.glob(files)
         dataset = tf.data.Dataset.list_files(files, shuffle=self.is_shuffle,
                                              seed=self.seed)
@@ -86,7 +84,7 @@ class TFRecordReader(object):
                               num_parallel_calls=tf.data.experimental.AUTOTUNE)
 
         dataset = dataset.map(_normalize_,
-                                  num_parallel_calls=tf.data.experimental.AUTOTUNE)
+                              num_parallel_calls=tf.data.experimental.AUTOTUNE)
         dataset = dataset.repeat()
         dataset = dataset.batch(self.batch_size)
         return dataset
@@ -103,8 +101,6 @@ if __name__ == '__main__':
                                                         labels.shape))
         break
 
-
-
     image, label = next(iter(train_dataset))
 
     for i in range(1):
@@ -112,4 +108,3 @@ if __name__ == '__main__':
         cv2.imshow('label', label[0].numpy())
 
     cv2.waitKey()
-
