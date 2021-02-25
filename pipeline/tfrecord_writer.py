@@ -9,37 +9,14 @@ from tqdm import tqdm
 
 
 def _int64_feature(value):
-    """This functions can be used to convert a value to a type compatible
-    with tf.train.Example
-
-    Returns:
-        an int64_list from int
-    """
     return tf.train.Feature(int64_list=tf.train.Int64List(value=[value]))
 
 
 def _bytes_feature(value):
-    """This functions can be used to convert a value to a type compatible
-    with tf.train.Example
-
-    Returns:
-        a bytes_list from a string / byte
-    """
     return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
 
 def _write_examples(example_data, filename: str, channels):
-    """ This method is used for writing the examples as a TFRecord
-    which contains features and label of the image.
-
-    Args:
-        example_data:
-        filename: name of the file
-        channels: value of the channels
-
-    Returns:
-
-    """
     with tf.io.TFRecordWriter(filename) as writer:
         for i, ex in enumerate(example_data):
             corrupt_image = ex['image'].tostring()
@@ -65,20 +42,18 @@ class WritingRecord:
         self.original_img_dir = '../femur_2d_segmentations/middle_slices/*'
         self.corrupt_images = glob.glob('../images/*')
         self.record_path = '../records'
-        self.train_ratio = 0.9
-        self.valid_ratio = 0.05
+        self.train_ratio = 0.80
+        self.valid_ratio = 0.20
 
     def create_dataset(self, image_list, data_type):
         data = []
         for org_img_path in tqdm(image_list):
             img_name = os.path.basename(org_img_path).split('.')[0]
-            crr_img_path_list = [k for k in self.corrupt_images if
-                                 img_name in k]
+            crr_img_path_list = [k for k in self.corrupt_images if img_name in k]
             img_label = cv2.imread(org_img_path, cv2.IMREAD_UNCHANGED)
             img_label = img_label.astype(np.float32)
             for crr_img_path in crr_img_path_list:
-                shape_name = os.path.basename(
-                    crr_img_path).split('.')[0].split('_')[1]
+                shape_name = os.path.basename(crr_img_path).split('.')[0].split('_')[1]
                 img = cv2.imread(crr_img_path, cv2.IMREAD_UNCHANGED)
                 if img is not None:
                     img = img.astype(np.float32)
@@ -105,11 +80,15 @@ class WritingRecord:
 
         # separating images with train test validation
         train_image_list = images[:train_image_no]
-        valid_image_list = images[train_image_no:valid_image_no]
-        test_image_list = images[valid_image_no:]
+        valid_image_list = images[train_image_no:]
+        # valid_image_list = images[train_image_no:valid_image_no]
+        # test_image_list = images[valid_image_no:]
+
+        print(len(train_image_list))
+        print(len(valid_image_list))
 
         data_types = {'validation': valid_image_list,
-                      'train': train_image_list, 'test': test_image_list
+                      'train': train_image_list
                       }
 
         for d in data_types:
