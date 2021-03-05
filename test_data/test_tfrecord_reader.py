@@ -18,7 +18,7 @@ class TFRecordReader(object):
     def __init__(self, record_path):
         self.record_path = record_path
         self.seed = 10
-        self.batch_size = 1265
+        self.batch_size = 64
         self.is_shuffle = True
         self.data_type = 'test'
         self.buffer = 1000
@@ -59,7 +59,7 @@ class TFRecordReader(object):
         dataset = dataset.map(self.parse_record, num_parallel_calls=AUTOTUNE)
         dataset = dataset.map(_normalize_, num_parallel_calls=AUTOTUNE)
         dataset = dataset.shuffle(self.buffer, seed=self.seed)
-        dataset = dataset.repeat(1)
+        # dataset = dataset.repeat(1)
         dataset = dataset.batch(self.batch_size)
         return dataset
 
