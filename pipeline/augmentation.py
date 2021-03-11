@@ -1,18 +1,20 @@
 import tensorflow as tf
-import imgaug.augmenters as iaa
 import tensorflow_addons as tfa
-import numpy as np
+from random import randint
 
 
-def _flip_left_right_(corrupt_image, original_image):
-    corrupt_image = tf.image.random_flip_left_right(corrupt_image)
-    original_image = tf.image.random_flip_left_right(original_image)
+def rotate(corrupt_image, original_image):
+    angle = randint(-15, 15)
+    concat = tf.concat([corrupt_image, original_image], axis=2)
+    concat = tfa.image.rotate(concat, angle)
+    corrupt_image, original_image = tf.split(concat, num_or_size_splits=2, axis=2)
     return corrupt_image, original_image
 
 
-def _flip_up_down_(corrupt_image, original_image):
-    corrupt_image = tf.image.random_flip_up_down(corrupt_image)
-    original_image = tf.image.random_flip_up_down(original_image)
+def _random_crop_(corrupt_image, original_image):
+    concat = tf.concat([corrupt_image, original_image], axis=2)
+    concat = tf.image.random_crop(concat, size=[128, 128, 1 + 1])
+    corrupt_image, original_image = tf.split(concat, [1, 1], axis=2)
     return corrupt_image, original_image
 
 
@@ -22,49 +24,10 @@ def _normalize_(corrupt_image, original_image):
     return corrupt_image, original_image
 
 
+
 def train_augmentation(corrupt_image, original_image):
-    corrupt_image, original_image = _flip_left_right_(corrupt_image, original_image)
-    corrupt_image, original_image = _flip_up_down_(corrupt_image, original_image)
+    corrupt_image, original_image = rotate(corrupt_image, original_image)
+    corrupt_image, original_image = _random_crop_(corrupt_image, original_image)
     return corrupt_image, original_image
 
 
-def _augmentations_corrupt_image(corrupt_image):
-    corrupt_image = corrupt_image.numpy()
-    seq = iaa.Sequential([(
-        iaa.Affine(scale=(1.0, 1.1),
-                   rotate=(-25, 25),
-                   mode='constant'))])
-    corrupt_image = seq.augment_image(corrupt_image)
-    return corrupt_image
-
-
-def _training_augmentation_corrupt_image(corrupt_image):
-    shape = corrupt_image.get_shape()
-    corrupt_image = tf.py_function(_augmentations_corrupt_image, inp=[corrupt_image],
-                                   Tout=tf.float32)
-    corrupt_image.set_shape(shape)
-    return corrupt_image
-
-
-def _augmentations_original_image(original_image):
-    original_image = original_image.numpy()
-    seq = iaa.Sequential([(
-        iaa.Affine(scale=(1.0, 1.1),
-                   rotate=(-25, 25),
-                   mode='constant'))])
-    original_image = seq.augment_image(original_image)
-    return original_image
-
-
-def _training_augmentation_original_image(original_image):
-    shape = original_image.get_shape()
-    original_image = tf.py_function(_augmentations_original_image, inp=[original_image],
-                                    Tout=tf.float32)
-    original_image.set_shape(shape)
-    return original_image
-
-
-def training_aug(corrupt_image, original_image):
-    corrupt_image = _training_augmentation_corrupt_image(corrupt_image)
-    original_image = _training_augmentation_original_image(original_image)
-    return corrupt_image, original_image
