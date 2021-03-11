@@ -11,7 +11,7 @@ tf.config.experimental.set_memory_growth(devises[0], True)
 test_dataset = TFRecordReader("D:/PROJECTS/internship/test_records").test_dataset()
 
 model = tf.keras.models.load_model(
-    "D:/PROJECTS/internship/saved model/unet_2_model.h5", compile=False)
+    "D:/PROJECTS/internship/saved model/unet_9_model.h5", compile=False)
 
 
 def display(display_list):
@@ -38,4 +38,4 @@ def show_predictions(dataset=None, num=1):
         display([image[0], mask[0], pred_mask[0]])
 
 
-show_predictions(test_dataset, 3)
+show_predictions(test_dataset, 10)
