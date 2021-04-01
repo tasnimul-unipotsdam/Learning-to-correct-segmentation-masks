@@ -41,7 +41,6 @@ def corruption_image_comparison():
         cv2.putText(ellipse_img, 'Ellipse', (30, ellipse_img.shape[0] - 50),
                     cv2.FONT_HERSHEY_SIMPLEX, 1, color=(255, 0, 0))
 
-
         line_img = cv2.imread(
             image_dir + file_names[0] + '_line.' + file_names[1])
         cv2.putText(line_img, 'Line', (50, line_img.shape[0] - 50),

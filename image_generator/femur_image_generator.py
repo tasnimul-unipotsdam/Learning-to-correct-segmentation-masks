@@ -6,10 +6,13 @@ import shutil
 import cv2
 import numpy as np
 
+number_object = 7
+line_number = 15
+
 
 def create_random_circle(img, x, y, w, h, radius=20):
-    new_x = np.random.randint(x, (x + w), 1)
-    new_y = np.random.randint(y, (y + h), 1)
+    new_x = np.random.randint(x, (x + w), number_object)
+    new_y = np.random.randint(y, (y + h), number_object)
     color = (0, 0, 0)
     for xx, yy in zip(new_x, new_y):
         center_coordinates = (int(xx), int(yy))
@@ -19,8 +22,8 @@ def create_random_circle(img, x, y, w, h, radius=20):
 
 
 def create_random_rect(img, x, y, w, h):
-    new_x = np.random.randint(x, (x + w), 1)
-    new_y = np.random.randint(y, (y + h), 1)
+    new_x = np.random.randint(x, (x + w), number_object)
+    new_y = np.random.randint(y, (y + h), number_object)
     color = (0, 0, 0)
     for xx, yy in zip(new_x, new_y):
         val = np.random.randint(-5, 5)
@@ -33,23 +36,26 @@ def create_random_rect(img, x, y, w, h):
 
 
 def create_random_triangle(img, x, y, w, h):
-    new_x = np.random.randint(x, (x + w), 1)
-    new_y = np.random.randint(y, (y + h), 1)
+    new_x = np.random.randint(x, (x + w), number_object)
+    new_y = np.random.randint(y, (y + h), number_object)
     color = (0, 0, 0)
     for xx, yy in zip(new_x, new_y):
         val = np.random.randint(-5, 5)
         if val < 0:
-            img = cv2.drawContours(img, [np.array([(xx + 10, yy + 20), (xx + 25, yy + 30), (xx - 30, yy + 35)])],  -1, color, -1)
+            img = cv2.drawContours(img, [
+                np.array([(xx + 10, yy + 20), (xx + 25, yy + 30), (xx - 30, yy + 35)])], -1, color,
+                                   -1)
         else:
-             img = cv2.drawContours(img, [np.array([(xx - 10, yy - 20), (xx + 25, yy + 30), (xx + 30, yy - 35)])], 0, color, -1)
-
+            img = cv2.drawContours(img, [
+                np.array([(xx - 10, yy - 20), (xx + 25, yy + 30), (xx + 30, yy - 35)])], 0, color,
+                                   -1)
 
     return img
 
 
 def create_random_ellipse(img, x, y, w, h):
-    new_x = np.random.randint(x, (x + w), 1)
-    new_y = np.random.randint(y, (y + h), 1)
+    new_x = np.random.randint(x, (x + w), number_object)
+    new_y = np.random.randint(y, (y + h), number_object)
     color = (0, 0, 0)
     for xx, yy in zip(new_x, new_y):
         img = cv2.ellipse(img, (xx, yy), (30, 10), 0, 0, 360, color, -1)
@@ -58,8 +64,8 @@ def create_random_ellipse(img, x, y, w, h):
 
 
 def create_random_line(img, x, y, w, h):
-    new_x = np.random.randint(x, (x + w), 1)
-    new_y = np.random.randint(y, (y + h), 1)
+    new_x = np.random.randint(x, (x + w), line_number)
+    new_y = np.random.randint(y, (y + h), line_number)
     color = (0, 0, 0)
     for xx, yy in zip(new_x, new_y):
         # end_x = xx + np.random.randint(10, 20, 1)
@@ -93,12 +99,10 @@ def dilation(img):
     return img
 
 
-
 def convex(img):
     img = convex_hull_image(img)
     img = img.astype(np.float32)
     return img
-
 
 
 def write_images(shape_type, file_path, img):
@@ -121,7 +125,6 @@ if __name__ == '__main__':
 
     files = glob.glob(os.path.join(data_dir, '*'))
 
-
     for file in files:
         image = cv2.imread(file, 0)
         # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -130,35 +133,36 @@ if __name__ == '__main__':
 
         # img = cv2.rectangle(img, (x,y),(x+w,y+h),(255,0,0),3)
 
-        # # Circle
+        #  Circle
         img = create_random_circle(image.copy(), x, y, w, h)
         write_images(shape_type='circle', file_path=file, img=img)
 
-        # # Rectangle
+        #  Rectangle
         img = create_random_rect(image.copy(), x, y, w, h)
         write_images(shape_type='rect', file_path=file, img=img)
 
-        # # Ellipse
+        #  Ellipse
         img = create_random_ellipse(image.copy(), x, y, w, h)
         write_images(shape_type='ellipse', file_path=file, img=img)
 
-        # # line
+        #  line
         img = create_random_line(image.copy(), x, y, w, h)
         write_images(shape_type='line', file_path=file, img=img)
 
-        ## erosion
-        img = erosion(image.copy())
-        write_images(shape_type='erosion', file_path=file, img=img)
-
-        ## dilation
-        img = dilation(image.copy())
-        write_images(shape_type='dilation', file_path=file, img=img)
-
-        ## triangle
+        # triangle
         img = create_random_triangle(image.copy(), x, y, w, h)
         write_images(shape_type='triangle', file_path=file, img=img)
 
+        """    
+        # erosion
+        img = erosion(image.copy())
+        write_images(shape_type='erosion', file_path=file, img=img)
 
+        # dilation
+        img = dilation(image.copy())
+        write_images(shape_type='dilation', file_path=file, img=img)
+        
+        # convex
         img = convex(image.copy())
         write_images(shape_type='convex', file_path=file, img=img)
-
+        """
