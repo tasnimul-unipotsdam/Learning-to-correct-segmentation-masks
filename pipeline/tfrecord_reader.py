@@ -1,6 +1,7 @@
 import os
 import glob
-import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 
 import tensorflow as tf
 
@@ -14,7 +15,7 @@ class TFRecordReader(object):
     def __init__(self, record_path, is_training=True):
         self.record_path = record_path
         self.seed = 10
-        self.batch_size = 1
+        self.batch_size = 4
         self.is_shuffle = True
         self.is_training = 'train' if is_training else 'validation'
 
@@ -59,7 +60,7 @@ class TFRecordReader(object):
                                      cycle_length=len(filenames),
                                      num_parallel_calls=min(len(filenames), AUTOTUNE))
         dataset = dataset.map(self.parse_record, num_parallel_calls=AUTOTUNE)
-        # dataset = dataset.map(rotate, num_parallel_calls=AUTOTUNE)
+        dataset = dataset.map(rotate, num_parallel_calls=AUTOTUNE)
         dataset = dataset.map(_normalize_, num_parallel_calls=AUTOTUNE)
         dataset = dataset.shuffle(self.buffer, seed=self.seed)
         dataset = dataset.batch(self.batch_size)
@@ -93,8 +94,10 @@ if __name__ == '__main__':
 
     image, label = next(iter(train_dataset))
 
-    for i in range(1):
-        cv2.imshow('label', label[5].numpy())
-        cv2.waitKey()
-        cv2.imshow('images', image[5].numpy())
-        cv2.waitKey()
+    for data in train_dataset.take(1):
+        img = np.resize(data[0].numpy()[2], (384, 160))
+        lab = np.resize(data[1].numpy()[2], (384, 160))
+        plt.imshow(img)
+        plt.imshow(lab)
+        plt.imsave('img.png', img)
+        plt.imsave("lab.png", lab)
