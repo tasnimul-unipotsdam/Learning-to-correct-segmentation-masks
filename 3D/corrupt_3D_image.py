@@ -4,11 +4,13 @@ import os
 import nibabel as nib
 import numpy as np
 
+number_of_rect = 5
+
 
 def rect(image, image_np):
-    x = np.random.randint(0, 160, 5)
-    y = np.random.randint(0, 384, 5)
-    z = np.random.randint(0, 384, 5)
+    x = np.random.randint(0, 160, number_of_rect)
+    y = np.random.randint(0, 384, number_of_rect)
+    z = np.random.randint(0, 384, number_of_rect)
 
     a = 40
     b = 40
@@ -22,7 +24,7 @@ def rect(image, image_np):
     y_end = np.minimum(y + b, image.shape[1])
     z_end = np.minimum(z + c, image.shape[2])
 
-    for i in range(0, 3):
+    for i in range(0, number_of_rect):
         image_np[x_start[i]:x_end[i], y_start[i]:y_end[i], z_start[i]:z_end[i]] = 0
 
     image_nifti = nib.Nifti1Image(image_np, image.affine)
