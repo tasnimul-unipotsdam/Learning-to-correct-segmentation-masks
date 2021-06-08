@@ -4,7 +4,7 @@ import os
 import nibabel as nib
 import numpy as np
 
-number_of_rect = 5
+number_of_rect = 7
 
 
 def rect(image, image_np):
