@@ -81,10 +81,6 @@ def compute_dice(X_ts, Y_ts, Y_ts_hat):
         dice.append(dice_coefficient(Y_ts[i, :, :, 0], Y_ts_hat[i, :, :, 0]))
     dice = np.array(dice)
     np.save("dice.npy", dice)
-
-    print('mean dice:', dice.mean())
-    print('median dice:', np.median(dice))
-
     return dice
 
 

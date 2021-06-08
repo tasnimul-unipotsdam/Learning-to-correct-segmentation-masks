@@ -15,20 +15,16 @@ U_ts_background = np.load("D:/PROJECTS/internship/MCDP/U_ts_background.npy")
 
 dice = np.load("D:/PROJECTS/internship/MCDP/dice.npy")
 
-X_ts = X_ts[:20]
+Ntest = 25
 
-Ntest = len(X_ts)
+# threshold = 0.5
+# Y_ts_hat[Y_ts_hat < threshold] = 0
+# Y_ts_hat[Y_ts_hat >= threshold] = 1
+#
+# U_ts[U_ts < threshold] = 0
+# U_ts[U_ts >= threshold] = 1
 
-Y_ts = Y_ts[:20]
-
-Y_ts_hat = Y_ts_hat[:20]
-
-U_ts = U_ts[:20]
-
-dice = dice[:20]
-
-
-fig, axes = plt.subplots(Ntest, 6, figsize=(4 * 7, Ntest * 4))
+fig, axes = plt.subplots(25, 4, figsize=(8 * 8, Ntest * 8))
 for i in range(Ntest):
     axes[i, 0].imshow(X_ts[i, :, :, 0], cmap='gray')
     axes[i, 0].set_xticks([])
@@ -50,17 +46,14 @@ for i in range(Ntest):
     axes[i, 3].set_yticks([])
     axes[i, 3].set_title('Model Uncertainty', {'fontsize': 16})
 
-    axes[i, 4].imshow(U_ts_foreground[i, :, :, 0], cmap='gray')
-    axes[i, 4].set_xticks([])
-    axes[i, 4].set_yticks([])
-    axes[i, 4].set_title('FG Uncertainty', {'fontsize': 16})
+    # axes[i, 4].imshow(U_ts_foreground[i, :, :, 0], cmap='gray')
+    # axes[i, 4].set_xticks([])
+    # axes[i, 4].set_yticks([])
+    # axes[i, 4].set_title('FG Uncertainty', {'fontsize': 16})
+    #
+    # axes[i, 5].imshow(U_ts_background[i, :, :, 0], cmap='gray')
+    # axes[i, 5].set_xticks([])
+    # axes[i, 5].set_yticks([])
+    # axes[i, 5].set_title('BG Uncertainty', {'fontsize': 16})
 
-    axes[i, 5].imshow(U_ts_background[i, :, :, 0], cmap='gray')
-    axes[i, 5].set_xticks([])
-    axes[i, 5].set_yticks([])
-    axes[i, 5].set_title('BG Uncertainty', {'fontsize': 16})
-
-plt.savefig("all_uncertainty_plot.jpg", bbox_inces='tight',
-            dpi=100)
-
-
+plt.savefig("uncertainty_plot.jpg", dpi=200)
