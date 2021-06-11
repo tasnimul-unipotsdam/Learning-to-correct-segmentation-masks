@@ -11,13 +11,8 @@ tf.config.experimental.set_memory_growth(devises[0], True)
 
 
 def unet_model():
-    model = unet_mcdp_3D(0.5, dropout=True)
+    model = unet_mcdp_3D()
     model.summary()
-    # adam = tf.keras.optimizers.Adam(learning_rate=0.0001)
-    # binary_crossentropy = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-    # model.compile(optimizer=adam,
-    #               loss=binary_crossentropy,
-    #               metrics=[dice_coefficient], run_eagerly=True)
 
     model.load_weights('unet_mcdp_3D_weights.h5')
     print("load weight complete")
