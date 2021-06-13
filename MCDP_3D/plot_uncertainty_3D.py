@@ -14,6 +14,8 @@ dice = np.load("D:/PROJECTS/internship/MCDP_3D/dice_mcdp_3D.npy")
 Ntest = 25
 threshold = 0.5
 
+X_ts[X_ts < threshold] = 0
+X_ts[X_ts >= threshold] = 1
 Y_ts[Y_ts < threshold] = 0
 Y_ts[Y_ts >= threshold] = 1
 Y_ts_hat[Y_ts_hat < threshold] = 0

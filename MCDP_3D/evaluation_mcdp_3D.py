@@ -28,6 +28,10 @@ def image_label():
 
 
 def estimate_uncertainty(model, X_ts):
+
+    X_ts[X_ts < threshold] = 0
+    X_ts[X_ts >= threshold] = 1
+
     Y_ts_hat = model.predict(X_ts, batch_size=1)
     print("prediction complete")
     T = 20
@@ -62,8 +66,10 @@ def compute_dice(Y_ts, Y_ts_hat):
 
     Y_ts[Y_ts < threshold] = 0
     Y_ts[Y_ts >= threshold] = 1
+
     Y_ts_hat[Y_ts_hat < threshold] = 0
     Y_ts_hat[Y_ts_hat >= threshold] = 1
+
     dice = []
     Ntest = len(Y_ts)
     for i in range(Ntest):
@@ -78,3 +84,4 @@ if __name__ == '__main__':
     X_ts, Y_ts = image_label()
     Y_ts_hat, U_ts = estimate_uncertainty(model=model, X_ts=X_ts)
     dice = compute_dice(Y_ts=Y_ts, Y_ts_hat=Y_ts_hat)
+    print(dice.mean())
