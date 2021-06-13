@@ -9,6 +9,8 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 devises = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(devises[0], True)
 
+threshold = 0.5
+
 
 def unet_model():
     model = unet_mcdp_3D()
@@ -44,12 +46,7 @@ def estimate_uncertainty(model, X_ts):
     U_ts = -(P_foreground * np.log(P_foreground) + P_background * np.log(P_background))
     np.save('U_ts_3D.npy', U_ts)
 
-    U_ts_foreground = -(P_foreground * np.log(P_foreground))
-    np.save("U_ts_foreground_3D.npy", U_ts_foreground)
-    U_ts_background = -(P_background * np.log(P_background))
-    np.save("U_ts_background_3D.npy", U_ts_background)
-
-    return Y_ts_hat, U_ts, U_ts_foreground, U_ts_background
+    return Y_ts_hat, U_ts
 
 
 def dice_coefficient(y_true, y_pred):
@@ -62,10 +59,15 @@ def dice_coefficient(y_true, y_pred):
 
 
 def compute_dice(Y_ts, Y_ts_hat):
+
+    Y_ts[Y_ts < threshold] = 0
+    Y_ts[Y_ts >= threshold] = 1
+    Y_ts_hat[Y_ts_hat < threshold] = 0
+    Y_ts_hat[Y_ts_hat >= threshold] = 1
     dice = []
     Ntest = len(Y_ts)
     for i in range(Ntest):
-        dice.append(dice_coefficient(Y_ts[i, :, :, :, 0], Y_ts_hat[i, :, :, :, 0]))
+        dice.append(dice_coefficient(Y_ts[i], Y_ts_hat[i]))
     dice = np.array(dice)
     np.save("dice_mcdp_3D.npy", dice)
     return dice
@@ -74,5 +76,5 @@ def compute_dice(Y_ts, Y_ts_hat):
 if __name__ == '__main__':
     model = unet_model()
     X_ts, Y_ts = image_label()
-    Y_ts_hat, U_ts, U_ts_foreground, U_ts_background = estimate_uncertainty(model=model, X_ts=X_ts)
+    Y_ts_hat, U_ts = estimate_uncertainty(model=model, X_ts=X_ts)
     dice = compute_dice(Y_ts=Y_ts, Y_ts_hat=Y_ts_hat)

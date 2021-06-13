@@ -11,16 +11,15 @@ U_ts = np.load("D:/PROJECTS/internship/MCDP_3D/U_ts_3D.npy")
 
 dice = np.load("D:/PROJECTS/internship/MCDP_3D/dice_mcdp_3D.npy")
 
-Ntest = 5
+Ntest = 25
+threshold = 0.5
 
-# threshold = 0.5
-# Y_ts_hat[Y_ts_hat < threshold] = 0
-# Y_ts_hat[Y_ts_hat >= threshold] = 1
-#
-# U_ts[U_ts < threshold] = 0
-# U_ts[U_ts >= threshold] = 1
+Y_ts[Y_ts < threshold] = 0
+Y_ts[Y_ts >= threshold] = 1
+Y_ts_hat[Y_ts_hat < threshold] = 0
+Y_ts_hat[Y_ts_hat >= threshold] = 1
 
-fig, axes = plt.subplots(5, 5, figsize=(8 * 8, Ntest * 8))
+fig, axes = plt.subplots(Ntest, 5, figsize=(8 * 8, Ntest * 8))
 for i in range(Ntest):
     axes[i, 0].imshow(X_ts[i, :, 95, :, 0])
     axes[i, 0].set_xticks([])
